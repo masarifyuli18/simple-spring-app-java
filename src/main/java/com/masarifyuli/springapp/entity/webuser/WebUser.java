@@ -1,9 +1,13 @@
 package com.masarifyuli.springapp.entity.webuser;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.masarifyuli.springapp.entity.vehicle.Vehicle;
 import com.masarifyuli.springapp.u.ConverterEnum;
+import com.masarifyuli.springapp.u.Util;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "webUser")
@@ -12,6 +16,9 @@ public class WebUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id = 0;
+
+    @Column(nullable = false, length = 12)
+    private String code = new Util().randomCode("WU");
     @Column(nullable = false, length = 15)
     private String username;
     @Column(nullable = false, length = 30)
@@ -28,6 +35,10 @@ public class WebUser implements Serializable {
     private String email;
     @Column(length = 20)
     private String mobileNo;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Vehicle> vehicleList;
 
     public enum Gender { MALE, FEMALE, UNDEFINED }
 
@@ -101,6 +112,14 @@ public class WebUser implements Serializable {
     public void setMobileNo(String mobileNo) {
         this.mobileNo = mobileNo;
     }
+
+    public List<Vehicle> getVehicleList() {
+        return vehicleList;
+    }
+
+    public String getCode() {
+        return code;
+    }
 }
 
 @Converter
@@ -109,4 +128,3 @@ class GenderConverter extends ConverterEnum<WebUser.Gender> implements Attribute
         super(WebUser.Gender.class);
     }
 }
-
